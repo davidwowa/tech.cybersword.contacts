@@ -4,60 +4,56 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import net.fortuna.ical4j.model.Property;
-import net.fortuna.ical4j.model.property.Tel;
-import net.fortuna.ical4j.vcard.Entity;
-import net.fortuna.ical4j.vcard.VCard;
-import net.fortuna.ical4j.vcard.property.BDay;
-import net.fortuna.ical4j.vcard.property.Fn;
-import net.fortuna.ical4j.vcard.property.Note;
-import net.fortuna.ical4j.vcard.property.Org;
-import net.fortuna.ical4j.vcard.property.Title;
+import ezvcard.VCard;
+import ezvcard.parameter.ImageType;
+import ezvcard.property.Email;
+import ezvcard.property.Photo;
+import ezvcard.property.StructuredName;
+import ezvcard.property.Telephone;
 
 public class VCardGenerator {
-    private final String[] FIRST_NAMES = { "Alice", "Bob", "Charlie", "David", "Emma", "Frank", "Grace",
-            "Hannah" };
-    private final String[] LAST_NAMES = { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller" };
-    private final String[] DOMAINS = { "example.com", "mail.com", "test.org", "demo.net" };
-    private final String[] COUNTRIES = { "Germany", "USA", "France", "UK", "Canada", "Italy" };
-    private final String[] SOCIAL_MEDIA = { "twitter", "linkedin", "facebook" };
 
-    public VCard generateRandomVCard() {
-        Random RANDOM = new Random();
+    static final String[] FIRST_NAMES = { "Alice", "Bob", "Charlie", "Diana", "Eva", "Frank", "Grace" };
+    static final String[] LAST_NAMES = { "Müller", "Meier", "Schmidt", "Fischer", "Weber", "Becker", "Hoffmann" };
+    static final String[] DOMAINS = { "example.com", "test.org", "mail.net" };
 
-        String firstName = getRandom(FIRST_NAMES);
-        String lastName = getRandom(LAST_NAMES);
-        String fullName = firstName + " " + lastName;
-        String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + getRandom(DOMAINS);
-        String phone = "+49 " + (1000 + RANDOM.nextInt(9000)) + " " + (100000 + RANDOM.nextInt(900000));
-        String street = (RANDOM.nextInt(99) + 1) + " " + lastName + " Street";
-        String city = "Berlin";
-        String country = getRandom(COUNTRIES);
-        String birthday = String.format("%04d-%02d-%02d", 1950 + RANDOM.nextInt(50), 1 + RANDOM.nextInt(12),
-                1 + RANDOM.nextInt(28));
-        String social = "https://" + getRandom(SOCIAL_MEDIA) + ".com/" + firstName.toLowerCase()
-                + lastName.toLowerCase();
+    public List<VCard> generateRandomVCard(int size, int picSize) {
+        List<VCard> cards = new ArrayList<>();
 
-        VCard vcard = new VCard();
+        for (int i = 0; i < size; i++) {
+            String firstName = randomFrom(FIRST_NAMES);
+            String lastName = randomFrom(LAST_NAMES);
+            String fullName = firstName + " " + lastName;
 
-        List<Property> properties = new ArrayList<>();
-        properties.add(new Fn(fullName));
-        properties.add(new Tel(phone));
-        properties.add(new BDay(birthday));
-        properties.add(new Org("Example Corp."));
-        properties.add(new Title("Software Engineer"));
-        properties.add(new Note("Dies ist eine automatisch generierte vCard für " + fullName + "."));
+            String email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@" + randomFrom(DOMAINS);
+            String phone = "+49 " + (100 + randomInt(900)) + " " + (1000000 + randomInt(8999999));
 
-        Entity e = new Entity();
-        e.getPropertyList().addAll(properties);
+            VCard vcard = new VCard();
 
-        vcard.add(e);
+            StructuredName n = new StructuredName();
+            n.setGiven(firstName);
+            n.setFamily(lastName);
+            vcard.setStructuredName(n);
+            vcard.setFormattedName(fullName);
+            vcard.addEmail(new Email(email));
+            vcard.addTelephoneNumber(new Telephone(phone));
 
-        return vcard;
+            byte[] fakeImage = new byte[picSize];
+            new Random().nextBytes(fakeImage);
+            Photo photo = new Photo(fakeImage, ImageType.JPEG);
+            vcard.addPhoto(photo);
+
+            cards.add(vcard);
+        }
+
+        return cards;
     }
 
-    private static String getRandom(String[] array) {
-        Random RANDOM = new Random();
-        return array[RANDOM.nextInt(array.length)];
+    static String randomFrom(String[] array) {
+        return array[new Random().nextInt(array.length)];
+    }
+
+    static int randomInt(int max) {
+        return new Random().nextInt(max);
     }
 }

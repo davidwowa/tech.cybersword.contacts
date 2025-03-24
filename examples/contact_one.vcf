@@ -1,0 +1,8 @@
+BEGIN:VCARD
+VERSION:3.0
+PRODID:ez-vcard 0.12.1
+N:Mustermann;Max
+FN:Max Mustermann
+TEL;WORK=voice:123-456-789
+EMAIL:[email protected]
+END:VCARD
