@@ -15,7 +15,7 @@ public class VCardGenerator {
 
     static final String[] FIRST_NAMES = { "Alice", "Bob", "Charlie", "Diana", "Eva", "Frank", "Grace" };
     static final String[] LAST_NAMES = { "Müller", "Meier", "Schmidt", "Fischer", "Weber", "Becker", "Hoffmann" };
-    static final String[] DOMAINS = { "example.com", "test.org", "mail.net" };
+    static final String[] DOMAINS = { "example.com", "test.org", "mail.net", ""};
 
     public List<VCard> generateRandomVCard(int size, int picSize) {
         List<VCard> cards = new ArrayList<>();
